@@ -2,12 +2,12 @@
   <div class="product-brand">
     <el-card class="box-card" shadow="never">
 
-      <el-form inline >
+      <el-form inline v-show="isShowSearchForm">
         <el-form-item label="品牌名称">
-          <el-input v-model="input" placeholder="请输入品牌名称"></el-input>
+          <el-input v-model="inputName" placeholder="请输入品牌名称"></el-input>
         </el-form-item>
         <el-form-item label="状态">
-          <el-select v-model="value" placeholder="请选择">
+          <el-select v-model="selectStatus" placeholder="请选择">
             <el-option
               label="开启"
               value="0">
@@ -22,29 +22,33 @@
           <div class="block">
             <el-date-picker
               class="brand-date-picker"
-              v-model="value1"
               type="daterange"
               range-separator="至"
               start-placeholder="开始日期"
-              end-placeholder="结束日期">
+              end-placeholder="结束日期"
+              v-model="selectDate"
+              value-format="yyyy-MM-dd HH:mm:ss"
+            >
             </el-date-picker>
           </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" icon="el-icon-search">搜索</el-button>
-          <el-button icon="el-icon-refresh">重置</el-button>
+          <el-button type="primary" icon="el-icon-search" @click="handleFormSearch">搜索</el-button>
+          <el-button icon="el-icon-refresh" @click="handleFormReset">重置</el-button>
         </el-form-item>
       </el-form>
       <div class="brand-toolbox">
         <el-button icon="el-icon-plus" type="primary" plain size="mini" plain>新增</el-button>
         <el-row :gutter="10">
-          <el-button icon="el-icon-search" circle></el-button>
-          <el-button icon="el-icon-refresh" circle></el-button>
+          <el-tooltip  effect="dark" content="显示搜索" placement="top">
+            <el-button icon="el-icon-search" circle @click="isShowSearchForm = !isShowSearchForm"></el-button>
+          </el-tooltip>
+          <el-button icon="el-icon-refresh" circle @click="handleRefesh"></el-button>
         </el-row>
       </div>
     </el-card>
-    <el-card shadow="never">
-      <el-table :data="list">
+    <el-card shadow="never" >
+      <el-table :data="list" v-loading="loading">
         <el-table-column
           prop="id"
           label="品牌编号">
@@ -71,15 +75,22 @@
           prop="status"
           label="状态">
           <template v-slot="{row}">
-            <el-tag v-if="row.status === 0">成功</el-tag>
-            <el-tag v-else>失败</el-tag>
+            <el-tag v-if="row.status === 0">开启</el-tag>
+            <el-tag v-else type="info">关闭</el-tag>
           </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="创建时间">
+          label="创建时间"
+          :formatter="handleformatDate">
+
         </el-table-column>
-        <el-table-column label="操作"></el-table-column>
+        <el-table-column label="操作">
+          <template v-slot="{row}">
+            <el-button type="text" size="mini" icon="el-icon-edit">编辑</el-button>
+            <el-button type="text" size="mini" icon="el-icon-delete">删除</el-button>
+          </template>
+        </el-table-column>
 
       </el-table>
 
@@ -101,29 +112,67 @@
 
 <script>
 import {getProductBrandPage} from '@/api/mall/product/brand'
+import {formatDate} from "@/utils";
 export default {
   name: "ProductBrand",
   data() {
     return {
       list:[],
-      total:'',
-    }
-  },
-  methods:{
-    handleSizeChange(){
-
-    },
-    async getList(){
-      const {data} = await getProductBrandPage({
+      total:0,
+      searchParams:{
         pageNo: 1,
         pageSize: 5,
         name: "",
         status: "",
         createTime: []
-      });
+      },
+      loading:false,
+      inputName:'',
+      selectStatus:'',
+      selectDate : [],
+      isShowSearchForm: true,
+    }
+  },
+  methods:{
+    handleRefesh(){
+      this.getList();
+    },
+    handleFormSearch(){
+      this.searchParams.name = this.inputName;
+      this.searchParams.status = this.selectStatus;
+      this.searchParams.createTime = this.selectDate;
+      this.getList();
+    },
+    handleFormReset(){
+      this.inputName = '';
+      this.selectStatus = '';
+      this.searchParams = {
+        pageNo: 1,
+        pageSize: 5,
+        name: "",
+        status: "",
+        createTime: []
+      };
+      this.getList();
+    },
+    handleformatDate(row){
+      return formatDate(row.createTime);
+    },
+    handleSizeChange(pageSize){
+      this.searchParams.pageSize = pageSize;
+      this.getList();
+    },
+    handleCurrentChange(pageNo){
+      this.searchParams.pageNo = pageNo
+      this.getList()
+    },
+    async getList(){
+      this.loading = true;
+      const {data} = await getProductBrandPage(this.searchParams);
       console.log(data)
       this.list = data.list;
       this.total = data.total;
+      this.loading = false;
     },
   },
   mounted() {
