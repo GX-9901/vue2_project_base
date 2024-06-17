@@ -38,17 +38,21 @@
         </el-form-item>
       </el-form>
       <div class="brand-toolbox">
-        <el-button icon="el-icon-plus" type="primary" plain size="mini" plain>新增</el-button>
+        <el-button icon="el-icon-plus" type="primary"  size="mini" @click="openUpdate" plain>新增</el-button>
         <el-row :gutter="10">
-          <el-tooltip  effect="dark" content="显示搜索" placement="top">
+          <el-tooltip  effect="dark"
+                       :content="`${isShowSearchForm ? '隐藏' : '显示'}搜索`"
+                       placement="top">
             <el-button icon="el-icon-search" circle @click="isShowSearchForm = !isShowSearchForm"></el-button>
           </el-tooltip>
-          <el-button icon="el-icon-refresh" circle @click="handleRefesh"></el-button>
+          <el-tooltip  effect="dark" content="刷新" placement="top">
+            <el-button icon="el-icon-refresh" circle @click="handleRefesh"></el-button>
+          </el-tooltip>
         </el-row>
       </div>
     </el-card>
     <el-card shadow="never" >
-      <el-table :data="list" v-loading="loading">
+      <el-table :data="list" v-loading="loading" row-keys="id">
         <el-table-column
           prop="id"
           label="品牌编号">
@@ -107,14 +111,19 @@
       >
       </el-pagination>
     </el-card>
+    <UpdateForm ref="updateFormRef" @success="getList"></UpdateForm>
   </div>
 </template>
 
 <script>
 import {getProductBrandPage} from '@/api/mall/product/brand'
 import {formatDate} from "@/utils";
+import UpdateForm from "@/views/mall/product/brand/updateForm.vue";
 export default {
   name: "ProductBrand",
+  components:{
+    UpdateForm
+  },
   data() {
     return {
       list:[],
@@ -134,6 +143,9 @@ export default {
     }
   },
   methods:{
+    openUpdate(){
+      this.$refs.updateFormRef.open();
+    },
     handleRefesh(){
       this.getList();
     },

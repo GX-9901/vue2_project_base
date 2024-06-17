@@ -7,5 +7,11 @@ export function getProductBrandPage(params){
 
   })
 }
-
+export function createProductBrand(data){
+  return request({
+    url: 'product/brand/create',
+    method: 'post',
+    data
+  })
+}
 export const getBrandList = () => {};
