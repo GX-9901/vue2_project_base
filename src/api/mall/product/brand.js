@@ -14,4 +14,23 @@ export function createProductBrand(data){
     data
   })
 }
+
+export function updateProductBrand(data){
+  return request({
+    url: 'product/brand/update/',
+    method: 'put',
+    data
+  })
+}
+
+export function deleteProductBrand(id){
+  return request({
+    url: 'product/brand/delete',
+    method: 'delete',
+    params: {
+      id
+    }
+
+  })
+}
 export const getBrandList = () => {};

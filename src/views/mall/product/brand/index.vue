@@ -52,7 +52,7 @@
       </div>
     </el-card>
     <el-card shadow="never" >
-      <el-table :data="list" v-loading="loading" row-keys="id">
+      <el-table :data="list" v-loading="loading" row-key="id">
         <el-table-column
           prop="id"
           label="品牌编号">
@@ -91,8 +91,8 @@
         </el-table-column>
         <el-table-column label="操作">
           <template v-slot="{row}">
-            <el-button type="text" size="mini" icon="el-icon-edit">编辑</el-button>
-            <el-button type="text" size="mini" icon="el-icon-delete">删除</el-button>
+            <el-button type="text" size="mini" icon="el-icon-edit" @click="showUpdateForm(row)">编辑</el-button>
+            <el-button type="text" size="mini" icon="el-icon-delete" @click="deleteForm(row)">删除</el-button>
           </template>
         </el-table-column>
 
@@ -116,7 +116,7 @@
 </template>
 
 <script>
-import {getProductBrandPage} from '@/api/mall/product/brand'
+import { getProductBrandPage,deleteProductBrand } from '@/api/mall/product/brand'
 import {formatDate} from "@/utils";
 import UpdateForm from "@/views/mall/product/brand/updateForm.vue";
 export default {
@@ -143,6 +143,22 @@ export default {
     }
   },
   methods:{
+    deleteForm(row){
+      this.$confirm('是否删除该品牌','提示',{
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        await deleteProductBrand(row.id);
+        this.$message.success('删除成功');
+        this.getList();
+      })
+    },
+    showUpdateForm(row){
+      this.$refs.updateFormRef.open(row);
+      console.log(row);
+      this.$refs.updateFormRef.updateFormData= {...row};
+    },
     openUpdate(){
       this.$refs.updateFormRef.open();
     },

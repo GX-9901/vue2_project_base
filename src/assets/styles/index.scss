@@ -130,7 +130,7 @@ aside {
 //main-container全局样式
 .app-container {
   padding: 20px;
-  
+
 }
 
 .components-container {
@@ -203,4 +203,23 @@ aside {
 
 .multiselect--active {
   z-index: 1000 !important;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.flex-align-center {
+  display: flex;
+  align-items: center;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
 }

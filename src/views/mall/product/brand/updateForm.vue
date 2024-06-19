@@ -1,6 +1,6 @@
 <script>
 import { getAccessToken } from "@/utils/auth";
-import {createProductBrand} from "@/api/mall/product/brand";
+import { createProductBrand , updateProductBrand} from "@/api/mall/product/brand";
 export default {
   name: "UpdateForm",
   data() {
@@ -34,14 +34,21 @@ export default {
     };
   },
   methods: {
+
     submit(){
       this.$refs.brandForm.validate(async valid => {
         if (valid) {
-          const {data} = await createProductBrand(this.updateFormData);
-
+          if (!!this.updateFormData.id) {
+            await updateProductBrand(this.updateFormData);
+            this.$message.success("修改品牌成功");
+            this.dialogVisible = false;
+            this.$emit('success');
+          } else {
+            await createProductBrand(this.updateFormData);
             this.$message.success("添加品牌成功");
             this.dialogVisible = false;
             this.$emit('success');
+          }
         }
       });
     },
@@ -75,7 +82,7 @@ export default {
         status: 0
       };
       this.dialogVisible = true;
-      this.$refs.brandForm.clearValidate();
+      this.$refs.brandForm?.clearValidate();
     },
     handleClose(done) {
       this.$confirm('确认关闭？')
@@ -85,13 +92,19 @@ export default {
         .catch(_ => {});
     }
   },
+/*  computed:{
+    isUpdateForm(){
+      return !!this.updateFormData.id ? '修改' : '添加';
+    }
+
+  }*/
 };
 </script>
 
 <template>
 <div>
   <el-dialog
-    title="添加品牌"
+    :title="`${!!this.updateFormData.id ? '修改':'添加'}品牌`"
     :visible.sync="dialogVisible"
     width="500px"
     :before-close="handleClose">

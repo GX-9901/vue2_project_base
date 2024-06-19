@@ -91,7 +91,13 @@ export const DICT_TYPE = {
   BROKERAGE_RECORD_BIZ_TYPE: "brokerage_record_biz_type", // 佣金业务类型
   BROKERAGE_RECORD_STATUS: "brokerage_record_status", // 佣金状态
   BROKERAGE_WITHDRAW_STATUS: "brokerage_withdraw_status", // 佣金提现状态
+
+  COMMENT_REPLY_STATUS: "comment_reply_status", // 评论回复状态
+  comment_product_score: "comment_product_score", // 评论商品评分
+
 };
+
+
 
 /**
  * 获取 dictType 对应的数据字典数组

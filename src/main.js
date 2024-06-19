@@ -26,6 +26,8 @@ import {
 import Pagination from "@/components/Pagination";
 // 自定义表格工具扩展
 import RightToolbar from "@/components/RightToolbar";
+import GGRightToolbar from "@/components/GGRightToolbar";
+import GGDialog from "@/components/GGDialog";
 import { Dialog } from "@/components/Dialog";
 // 字典标签组件
 import DictTag from "@/components/DictTag";
@@ -58,7 +60,10 @@ Vue.component("DictTag", DictTag);
 Vue.component("DocAlert", DocAlert);
 Vue.component("Pagination", Pagination);
 Vue.component("RightToolbar", RightToolbar);
+Vue.component("GGRightToolbar", GGRightToolbar);
 Vue.component("Dialog", Dialog);
+Vue.component("GGDialog",GGDialog);
+
 
 // 头部标签插件
 import VueMeta from "vue-meta";
