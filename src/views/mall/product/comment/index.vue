@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <el-card shadow="never" class="mb-20">
-      <el-form inline v-show="isShowSeachForm">
+      <el-form inline v-show="isShowSearchForm">
         <el-form-item label="回复状态">
           <el-select placeholder="请选择回复状态" size="small" v-model="searchParams.replyStatus">
             <el-option v-for="opt in replyStatusOptions"
@@ -54,8 +54,7 @@
         <el-button type="primary" plain icon="el-icon-plus" size="mini" @click="showVirtualCommentForm">
           添加虚拟评论
         </el-button>
-        <GGRightToolbar :visible.sync="isShowSeachForm"  @refresh="getList"/>
-
+        <GGRightToolbar :visible.sync="isShowSearchForm" @refresh="getList"/>
       </div>
     </el-card>
 
@@ -135,7 +134,7 @@
       >
       </el-pagination>
     </el-card>
-    <ReplyForm />
+    <ReplyForm ref="replyFormRef" @success="getList" />
     <VirtualCommentForm ref="virtualCommentFormRef"/>
   </div>
 
@@ -167,9 +166,10 @@ export default {
         createTime: [],
       },
       loading:false,
-      isShowSeachForm: true,
+      isShowSearchForm: true,
       replyStatusOptions: getDictDatas(DICT_TYPE.COMMENT_REPLY_STATUS),
       scoreOptions: getDictDatas(DICT_TYPE.comment_product_score),
+      commentId: null,
     };
   },
   methods: {
@@ -178,7 +178,7 @@ export default {
     },
     showReplyForm(id) {
       this.$refs.replyFormRef.open();
-      this.$refs.replyFormRef.replyFormData.id = id;
+      this.$refs.replyFormRef.commentForm.id = id;
     },
     reset(){
       this.searchParams = {

@@ -28,7 +28,9 @@ import Pagination from "@/components/Pagination";
 import RightToolbar from "@/components/RightToolbar";
 import GGRightToolbar from "@/components/GGRightToolbar";
 import GGDialog from "@/components/GGDialog";
+import GGTreeSelect from "@/components/GGTreeSelect";
 import { Dialog } from "@/components/Dialog";
+import {UploadImg} from "@/components/GGUploadImg";
 // 字典标签组件
 import DictTag from "@/components/DictTag";
 import DocAlert from "@/components/DocAlert";
@@ -63,6 +65,8 @@ Vue.component("RightToolbar", RightToolbar);
 Vue.component("GGRightToolbar", GGRightToolbar);
 Vue.component("Dialog", Dialog);
 Vue.component("GGDialog",GGDialog);
+Vue.component("UploadImg",UploadImg);
+Vue.component("GGTreeSelect",GGTreeSelect);
 
 
 // 头部标签插件

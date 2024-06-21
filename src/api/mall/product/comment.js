@@ -6,3 +6,10 @@ export function getCommentBrandPage(params) {
     params,
   });
 }
+export function createCommentBrand(data) {
+  return request({
+    url: "product/comment/reply",
+    method: "put",
+    data,
+  });
+}
