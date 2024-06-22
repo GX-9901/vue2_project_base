@@ -12,18 +12,22 @@ export default {
         children: 'children',
         label: 'label'
       })
-
+    },
+    value: {
+      type: [String, Number, Object],
+      required: true
     }
   },
   data(){
     return {
-      selectedGood: ''
+      selectedGood:this.value,
     }
   },
   methods: {
     handleNodeClick(data) {
-      this.selectedGood = data.name
+      this.selectedGood = data
       this.$refs.selectedGoodRef.blur()
+      this.$emit('input', data);
     }
   },
 }
@@ -33,10 +37,10 @@ export default {
     <el-select
       placeholder="请选择"
       popper-class="select-tree"
-      :value="selectedGood"
+      :value="selectedGood[defaultProps.label]"
       ref="selectedGoodRef"
     >
-      <el-option>
+      <el-option value="">
         <el-tree
           :data="treeData"
           :props="defaultProps"
@@ -57,5 +61,10 @@ export default {
   background-color: #fff !important;
   padding: 0 !important;
   font-weight: normal !important;
+}
+.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  background-color: #fff;
+  color: #409eff;
+  font-weight: 700;
 }
 </style>

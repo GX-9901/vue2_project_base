@@ -6,6 +6,7 @@ export default {
     return {
       visible: false,
       picUrls: [],
+      img:""
     };
   },
   methods: {
@@ -18,6 +19,12 @@ export default {
     showSkuSelectForm() {
       this.$refs.skuSelectFormRef.open();
     },
+    getImg(img) {
+      this.img = img;
+    },
+    deleteImg(){
+      this.img = "";
+    }
   },
   components: {
     SkuSelectForm,
@@ -39,12 +46,18 @@ export default {
         class="virtualcommentform"
       >
         <el-form-item label="商品">
-          <el-tooltip content="选择商品">
+
+            <div class="el-upload el-upload--picture-card"
+                 v-if="img">
+              <i class="el-icon-close" @click="deleteImg"></i>
+              <el-image :src="img"/>
+            </div>
+          <el-tooltip content="选择商品" v-else>
             <div
               class="el-upload el-upload--picture-card"
               @click="showSkuSelectForm"
             >
-              <i class="el-icon-plus"></i>
+              <i class="el-icon-plus" ></i>
             </div>
           </el-tooltip>
         </el-form-item>
@@ -72,7 +85,7 @@ export default {
         <el-button type="primary" size="small">确定</el-button>
       </template>
     </GGDialog>
-    <SkuSelectForm ref="skuSelectFormRef" >
+    <SkuSelectForm ref="skuSelectFormRef" @success="getImg">
 
     </SkuSelectForm>
   </div>
@@ -97,5 +110,19 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%,-50%);
+}
+.el-icon-close {
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  width: 12px;
+  height: 12px;
+  background-color: #606266;
+  color: #fff;
+  z-index: 100;
+  font-size: 7px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 13px;
 }
 </style>

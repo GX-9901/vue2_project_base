@@ -1,5 +1,6 @@
 <script>
 import {getProductCategoryList} from "@/api/mall/product/category";
+import {getSpuPage} from "@/api/mall/product/spu";
 export default {
   name: "SkuSelectForm",
   data() {
@@ -8,11 +9,18 @@ export default {
       searchParams: {
         pageNo: 1,
         pageSize: 5,
+        name: "",
+        tabType: 0,
+        categoryId: "",
+        createTime: [],
       },
       total: 0,
       list: [],
       loading: false,
       treeData: [],
+      groupList: [],
+      goodsgrouplist:{},
+      selectPicUrl: "",
     };
   },
   methods: {
@@ -22,8 +30,14 @@ export default {
     open() {
       this.visible = true;
     },
-    handleSizeChange() {},
-    handleCurrentChange() {},
+    handleSizeChange(pageSize) {
+      this.searchParams.pageSize = pageSize;
+      this.getList();
+    },
+    handleCurrentChange(pageNo) {
+      this.searchParams.pageNo = pageNo;
+      this.getList();
+    },
     groupByParentId(data) {
       return data.reduce((p, c) => {
         if (p[c.parentId]) {
@@ -43,12 +57,50 @@ export default {
     },
     async getGoodsList() {
       const res = await getProductCategoryList();
+      this.groupList = res.data;
       const data = this.groupByParentId(res.data);
       this.treeData = this.handleTreeData(data);
     },
+    async getList(){
+      this.loading = true;
+      await getSpuPage({
+        ...this.searchParams,
+        categoryId: this.goodsgrouplist,
+      }).then((res) => {
+        // console.log(res);
+        this.list = res.data.list;
+        this.total = res.data.total;
+        this.loading = false;
+      }).catch(() => {
+        this.loading = false;
+      });
     },
+    handleGroupFormatter(row){
+      return this.groupList.find((item) => item.id === row.categoryId).name;
+    },
+    search(){
+      this.searchParams.pageNo = 1;
+      this.getList();
+    },
+    reset(){
+      this.searchParams = {
+        pageNo: 1,
+        pageSize: 5,
+        name: "",
+        tabType: 0,
+        categoryId: "",
+        createTime: [],
+      };
+      this.getList();
+    },
+    handleRadio(val){
+      this.$emit('success', val);
+      this.close()
+    }
+  },
   mounted() {
     this.getGoodsList();
+    this.getList()
   },
 }
 </script>
@@ -58,14 +110,19 @@ export default {
   <el-card shadow="never">
     <el-form inline >
       <el-form-item label="商品名称">
-        <el-input type="text"  placeholder="请输入商品名称" size="small"/>
+        <el-input type="text"
+                  placeholder="请输入商品名称"
+                  size="small"
+                  v-model="this.searchParams.name"/>
       </el-form-item>
       <el-form-item label="商品分类">
         <GGTreeSelect :treeData="treeData"
                       :defaultProps="{
                         children: 'children',
                         label: 'name',
-                      }">
+                      }"
+                      v-model="goodsgrouplist"
+        >
 
         </GGTreeSelect>
       </el-form-item>
@@ -80,19 +137,45 @@ export default {
         ></el-date-picker>
       </el-form-item>
       <el-form-item>
-        <el-button type="primary" size="small" icon="el-icon-search">搜索</el-button>
+        <el-button type="primary" size="small" icon="el-icon-search" @click="search">搜索</el-button>
         <el-button size="small" icon="el-icon-refresh">重置</el-button>
       </el-form-item>
     </el-form>
     <el-table :data="list" v-loading="loading" row-key="id" class="mb-20">
-      <el-table-column label="商品编号" align="center"></el-table-column>
-      <el-table-column label="商品图片" align="center">
+      <el-table-column
+        label="#"
+      >
         <template v-slot="{ row }">
-          <el-image :src="row"></el-image>
+          <el-radio
+            v-model="selectPicUrl"
+            @input="handleRadio"
+            :label="row.picUrl"
+          >
+            <div></div>
+          </el-radio>
         </template>
       </el-table-column>
-      <el-table-column label="商品名称" align="center"></el-table-column>
-      <el-table-column label="商品分类" align="center"></el-table-column>
+
+      <el-table-column
+        label="商品编号"
+        align="center"
+        prop="id"
+      ></el-table-column>
+      <el-table-column label="商品图片" align="center">
+        <template v-slot="{ row }">
+          <el-image :src="row.picUrl"></el-image>
+        </template>
+      </el-table-column>
+      <el-table-column
+        label="商品名称"
+        align="center"
+        prop="name"
+      ></el-table-column>
+      <el-table-column
+        label="商品分类"
+        align="center"
+        :formatter="handleGroupFormatter"
+      ></el-table-column>
     </el-table>
     <el-pagination
       @size-change="handleSizeChange"
@@ -111,5 +194,8 @@ export default {
 </template>
 
 <style scoped lang="scss">
-
+.el-image{
+  width: 50px;
+  height: 50px;
+}
 </style>
